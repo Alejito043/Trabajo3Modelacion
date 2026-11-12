@@ -1,0 +1,17 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+.idea/
+.metadata
+pubspec.lock
+# Plataformas: se generan con "flutter create ." (ver LEEME.md)
+android/
+ios/
+web/
+windows/
+linux/
+macos/

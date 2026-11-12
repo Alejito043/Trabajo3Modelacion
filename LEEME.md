@@ -1,0 +1,33 @@
+# FilaLab (Flutter) · Reto 3
+
+App para modelar las filas de cajas de un supermercado con teoría de colas M/M/1 y M/M/s:
+ingreso de datos de campo (o importando la planilla de Excel), ecuaciones paso a paso,
+simulación animada, Montecarlo, escenarios de mejora con costos e informe PDF.
+
+## Descargar el APK
+
+Cada vez que se suben cambios, GitHub compila el APK solo:
+pestaña **Actions** > última ejecución de "Compilar APK (Flutter)" > descargar **FilaLab-apk**.
+
+## Trabajar en Windows
+
+1. Instalar Git, Flutter (en `C:\src\flutter`, con `C:\src\flutter\bin` en el PATH) y Android Studio.
+2. `flutter doctor --android-licenses` y luego `flutter doctor`.
+3. En esta carpeta: `flutter create --org co.edu.amigo --project-name filalab --platforms android .`
+   (genera la carpeta `android`, que no se sube al repositorio).
+4. `flutter pub get`
+5. `flutter run` con el celular conectado (depuración USB activada).
+6. APK: `flutter build apk --release` → `build\app\outputs\flutter-apk\app-release.apk`.
+
+Para el ícono: copiar `assets\icono\mipmap-*\ic_launcher.png` a `android\app\src\main\res\mipmap-*\`.
+
+## Estructura
+
+| Archivo | Qué hace |
+|---|---|
+| `lib/modelos/colas.dart` | Fórmulas M/M/1 y M/M/s, Pn, lectura de datos, escenarios y Montecarlo |
+| `lib/estado.dart` | Datos guardados, cálculo, ecuaciones con sustitución y recomendación |
+| `lib/pantallas/` | Inicio, Datos, Resultados, Simulación y Mejora |
+| `lib/servicios/importar_excel.dart` | Lee la planilla de campo (.xlsx) |
+| `lib/servicios/informe_pdf.dart` | Genera el informe PDF |
+| `lib/datos_d1.dart` | Datos de la planilla del D1 (12/11/2026) |

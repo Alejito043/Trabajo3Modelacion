@@ -1,0 +1,59 @@
+name: Compilar APK (Flutter)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.5
+          channel: stable
+          cache: true
+
+      - name: Generar la carpeta Android
+        run: flutter create --org co.edu.amigo --project-name filalab --platforms android .
+
+      - name: Ajustar versiones de Android (Gradle, Kotlin, SDK)
+        run: |
+          sed -i 's/gradle-8\.[0-9.]*-all\.zip/gradle-8.7-all.zip/' android/gradle/wrapper/gradle-wrapper.properties
+          sed -i -E 's/(id "com.android.application" version )"[0-9.]+"/\1"8.5.2"/' android/settings.gradle
+          sed -i -E 's/(id "org.jetbrains.kotlin.android" version )"[0-9.]+"/\1"1.9.24"/' android/settings.gradle
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' android/app/build.gradle
+          sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/' android/app/build.gradle
+          cat android/settings.gradle android/gradle/wrapper/gradle-wrapper.properties | grep -E "version|distributionUrl" || true
+
+      - name: Nombre e ícono de la app
+        run: |
+          sed -i 's/android:label="filalab"/android:label="FilaLab"/' android/app/src/main/AndroidManifest.xml
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp assets/icono/mipmap-$d/ic_launcher.png android/app/src/main/res/mipmap-$d/ic_launcher.png
+          done
+
+      - name: Dependencias
+        run: flutter pub get
+
+      - name: Revisar código
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Pruebas de las fórmulas
+        run: flutter test
+
+      - name: Compilar APK
+        run: flutter build apk --release
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: FilaLab-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
